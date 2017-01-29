@@ -1,4 +1,4 @@
-FROM 32bit/debian:jessie
+FROM debian:jessie
 MAINTAINER contact@algoo.fr
 
 # TODO: See GOOD PRATICE (remove apt lists, cache, etc)
