@@ -1,46 +1,19 @@
 #!/usr/bin/env bash
 
-#
-# ENVIRONMENT VARIABLES ARE:
-#
-# * DATABASE_TYPE (values: postgresql, mysql, sqlite)
-# * DATABASE_USER
-# * DATABASE_PASSWORD
-# * DATABASE_HOST
-# * DATABASE_PORT
-# * DATABASE_NAME
-# * PULL
-#
-
 # Default values
-# TODO: Voir avec Damien si c'est le comportement souhaité
-PULL=${PULL:=1}
 CONFIG_FILE_IS_NEW=0
 
 # Check environment variables
-/tracim/check_env_vars.sh
+/bin/bash /tracim/check_env_vars.sh
 if [ ! "$?" = 0 ]; then
     exit 1
 fi
 
-# If PULL is set, change repository HEAD
-if [ "$PULL" = 1 ]; then
-    echo "Upgrade Tracim code"
-    cd /tracim && git pull origin master
+# Execute common tasks
+/bin/bash /tracim/common.sh
+if [ ! "$?" = 0 ]; then
+    exit 1
 fi
-
-# Create config.ini file if no exist
-if [ ! -f /etc/tracim/config.ini ]; then
-    CONFIG_FILE_IS_NEW=1
-    cp /tracim/tracim/development.ini.base /etc/tracim/config.ini
-fi
-ln -sf /etc/tracim/config.ini /tracim/tracim/config.ini
-
-# Create wsgidav.conf file if no exist
-if [ ! -f /etc/tracim/wsgidav.conf ]; then
-    cp /tracim/tracim/wsgidav.conf.sample /etc/tracim/wsgidav.conf
-fi
-ln -sf /etc/tracim/wsgidav.conf /tracim/tracim/wsgidav.conf
 
 # MySQL case
 if [ "$DATABASE_TYPE" = mysql ] ; then

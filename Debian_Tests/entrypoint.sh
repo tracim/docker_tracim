@@ -1,27 +1,18 @@
 #!/usr/bin/env bash
 
-#
-# ENVIRONMENT VARIABLES ARE:
-#
-# * TEST_DATABASE_ENGINE (values: postgresql, mysql, sqlite)
-# * CHECKOUT (values: a commit or branch name)
-# * PULL (values: 0 or 1)
-# * FETCH (values: 0 or 1)
-#
-
 # Default values
 FETCH=${FETCH:=1}
-PULL=${PULL:=1}
 
-# If PULL is set, change repository HEAD
-if [ "$FETCH" = 1 ]; then
-    cd /tracim && git fetch origin
+# Check environment variables
+/bin/bash /tracim/check_env_vars.sh
+if [ ! "$?" = 0 ]; then
+    exit 1
 fi
 
-
-# If PULL is set, change repository HEAD
-if [ "$PULL" = 1 ]; then
-    cd /tracim && git pull origin master
+# Execute common tasks
+/bin/bash /tracim/common.sh
+if [ ! "$?" = 0 ]; then
+    exit 1
 fi
 
 # If CHECKOUT is set, change repository HEAD
@@ -30,22 +21,8 @@ if [ -n "$CHECKOUT" ]; then
     echo "CHECKOUT set to $CHECKOUT"
 fi
 
-# Ensure TEST_DATABASE_ENGINE is set
-if ! [ -n "$TEST_DATABASE_ENGINE" ]; then
-    echo "You must set TEST_DATABASE_ENGINE environment variable"
-    exit 1
-fi
-
-# Ensure TEST_DATABASE_ENGINE value
-case "$TEST_DATABASE_ENGINE" in
-    postgresql|mysql|sqlite) ;;
-    *) echo "TEST_DATABASE_ENGINE environment variable must be one of these: \
-postgresql, mysql, sqlite" ; exit 1 ;;
-esac
-
-# Prepare config files
-cp /tracim/tracim/development.ini.base /tracim/tracim/development.ini
-cp /tracim/tracim/wsgidav.conf.sample /tracim/tracim/wsgidav.conf
+# tracim test.ini need a development.ini
+cp /tracim/tracim/config.ini /tracim/tracim/development.ini
 
 # PostgreSQL case
 if [ "$TEST_DATABASE_ENGINE" = postgresql ] ; then

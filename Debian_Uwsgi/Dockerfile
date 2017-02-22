@@ -2,6 +2,8 @@ FROM debian:jessie
 MAINTAINER contact@algoo.fr
 
 # TODO: See GOOD PRATICE (remove apt lists, cache, etc)
+# TODO @Damien: processus d'install (pip) plein de warning et d'erreur
+# de compilation non fatals. Voir pour avoir toute les libb-dev qu'il faut ?
 
 # Install required packages
 RUN apt-get update -q \
@@ -56,6 +58,7 @@ COPY uwsgi.ini /etc/tracim/uwsgi.ini
 COPY nginx.conf /etc/tracim/nginx.conf
 COPY wsgi.py /tracim/tracim/wsgi.py
 COPY check_env_vars.sh /tracim/check_env_vars.sh
+COPY common.sh /tracim/common.sh
 COPY entrypoint.sh /tracim/entrypoint.sh
 
 RUN ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini && \
