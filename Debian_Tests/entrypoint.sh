@@ -27,18 +27,22 @@ cp /tracim/tracim/config.ini /tracim/tracim/development.ini
 # PostgreSQL case
 if [ "$TEST_DATABASE_ENGINE" = postgresql ] ; then
     service postgresql start
-    su - postgres -s /bin/bash -c "psql -c \"CREATE DATABASE tracim;\""
-    su - postgres -s /bin/bash -c "psql -c \"ALTER USER postgres WITH PASSWORD 'dummy';\""
-    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = postgresql:\/\/postgres:dummy@127.0.0.1:5432\/tracim?client_encoding=utf8/" /tracim/tracim/test.ini
-    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = postgresql:\/\/postgres:dummy@127.0.0.1:5432\/tracim?client_encoding=utf8/" /tracim/tracim/development.ini
+    su - postgres -s /bin/bash -c "psql -c \"CREATE USER tracimuser WITH PASSWORD 'tracimpassword';\""
+    su - postgres -s /bin/bash -c "psql -c \"CREATE DATABASE tracimdb OWNER tracimuser;\""
+    # su - postgres -s /bin/bash -c "psql -c \"ALTER USER postgres WITH PASSWORD 'dummy';\"
+    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = postgresql:\/\/tracimuser:tracimpassword@127.0.0.1:5432\/tracimdb?client_encoding=utf8/" /tracim/tracim/test.ini
+    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = postgresql:\/\/tracimuser:tracimpassword@127.0.0.1:5432\/tracimdb?client_encoding=utf8/" /tracim/tracim/development.ini
 fi
 
 # MySQL case
 if [ "$TEST_DATABASE_ENGINE" = mysql ] ; then
     service mysql start
-    mysql -e 'CREATE DATABASE tracim;'
-    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = mysql+oursql:\/\/root@localhost\/tracim/" /tracim/tracim/test.ini
-    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = mysql+oursql:\/\/root@localhost\/tracim/" /tracim/tracim/development.ini
+    mysql -e "CREATE USER 'tracimuser'@'localhost' IDENTIFIED BY 'tracimpassword';"
+    mysql -e "CREATE DATABASE tracimdb DEFAULT CHARACTER SET utf8;"
+    mysql -e "GRANT ALL PRIVILEGES ON tracimdb.* TO 'tracimuser'@'localhost';"
+    mysql -e "FLUSH PRIVILEGES;"
+    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = mysql+pymysql:\/\/tracimuser:tracimpassword@localhost\/tracimdb/" /tracim/tracim/test.ini
+    sed -i "s/\(sqlalchemy.url *= *\).*/\sqlalchemy.url = mysql+pymysql:\/\/tracimuser:tracimpassword@localhost\/tracimdb/" /tracim/tracim/development.ini
 fi
 
 # SQLite case
@@ -48,4 +52,5 @@ if [ "$TEST_DATABASE_ENGINE" = sqlite ] ; then
 fi
 
 # Run tests
-cd /tracim/tracim && nosetests -c /tracim/tracim/test.ini -v
+# TODO retirez true
+cd /tracim/tracim && nosetests -c /tracim/tracim/test.ini -v ; true
