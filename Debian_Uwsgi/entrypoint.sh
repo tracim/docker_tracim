@@ -2,12 +2,16 @@
 
 # Default values
 CONFIG_FILE_IS_NEW=0
+export PYTHON_EGG_CACHE=/tmp 
+set -e
 
 # Check environment variables
 /bin/bash /tracim/check_env_vars.sh
 if [ ! "$?" = 0 ]; then
     exit 1
 fi
+
+rm -f /tmp/config.ini
 
 # Execute common tasks
 /bin/bash /tracim/common.sh
@@ -21,11 +25,9 @@ if [ "$DATABASE_TYPE" = mysql ] ; then
     if ! [ -n "$DATABASE_PORT" ]; then
         DATABASE_PORT=3306
     fi
-    # engine is mysql+oursql
-    DATABASE_TYPE=mysql+oursql
 
     # Check if database must be init
-    TEST_TABLE=$(mysql --host="$DATABASE_HOST" --user="$DATABASE_USER" --password="$DATABASE_USER" --database="$DATABASE_NAME" -s -N --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$DATABASE_NAME' AND table_name = 'content';")
+    TEST_TABLE=$(mysql --host="$DATABASE_HOST" --user="$DATABASE_USER" --password="$DATABASE_PASSWORD" --database="$DATABASE_NAME" -s -N --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$DATABASE_NAME' AND table_name = 'content';")
     if [ ${TEST_TABLE} = 0 ] ; then
         INIT_DATABASE=true
     fi
@@ -40,8 +42,8 @@ if [ "$DATABASE_TYPE" = postgresql ] ; then
     DATABASE_SUFFIX="?client_encoding=utf8"
 
     # Check if database must be init
-    TEST_TABLE=$(PGPASSWORD="$DATABASE_PASSWORD" psql -U ${DATABASE_USER} -h ${TEST_TABLE} -d ${DATABASE_NAME} -t -c "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'content' );")
-    if [ ${TEST_TABLE} = f ] ; then
+    TEST_TABLE=$(PGPASSWORD="$DATABASE_PASSWORD" psql -U ${DATABASE_USER} -h ${DATABASE_HOST} -d ${DATABASE_NAME} -t -c "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'content' );")
+    if [ $TEST_TABLE = f ] ; then
         INIT_DATABASE=true
     fi
 fi
@@ -53,12 +55,13 @@ if [ "$DATABASE_TYPE" = sqlite ] ; then
     fi
 fi
 
-# Some configs are require if it's a fresh config file
-if [ "$CONFIG_FILE_IS_NEW" = 1 ] ; then
-    # Update radicale file system folder config
+
+# Create file if tmp/config.ini exist
+if [ -f "/tmp/config.ini" ]; then
+    echo "IN"
+    cp  /etc/tracim/config.ini /tmp/config.ini
+    sed -i 's/\(depot_storage_dir *= *\).*/depot_storage_dir = \/var\/tracim\/depot/' /etc/tracim/config.ini
     sed -i "s/\(# radicale.server.filesystem.folder *= *\).*/radicale.server.filesystem.folder = \/var\/tracim\/radicale/" /etc/tracim/config.ini
-    # Update secret
-    # TODO: test it
     SECRET=$(python -c "import uuid; print(str(uuid.uuid4()))")
     sed -i "s/\(cookie_secret *= *\).*/cookie_secret = $SECRET/" /etc/tracim/config.ini
     sed -i "s/\(beaker.session.secret *= *\).*/beaker.session.secret = $SECRET/" /etc/tracim/config.ini
