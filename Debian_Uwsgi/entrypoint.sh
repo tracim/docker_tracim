@@ -56,9 +56,8 @@ fi
 
 
 # Create file if tmp/config.ini exist
-if [ -f "/tmp/config.ini" ]; then
-    echo "IN"
-    cp  /etc/tracim/config.ini /tmp/config.ini
+if [ ! -f "/etc/tracim/config.ini" ]; then
+    cp /tracim/tracim/development.ini.base /etc/tracim/config.ini
     sed -i 's/\(depot_storage_dir *= *\).*/depot_storage_dir = \/var\/tracim\/depot/' /etc/tracim/config.ini
     sed -i "s/\(# radicale.server.filesystem.folder *= *\).*/radicale.server.filesystem.folder = \/var\/tracim\/radicale/" /etc/tracim/config.ini
     SECRET=$(python -c "import uuid; print(str(uuid.uuid4()))")
