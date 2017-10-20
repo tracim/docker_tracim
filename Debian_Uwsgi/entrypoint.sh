@@ -11,7 +11,6 @@ if [ ! "$?" = 0 ]; then
     exit 1
 fi
 
-rm -f /tmp/config.ini
 
 # Execute common tasks
 /bin/bash /tracim/common.sh
