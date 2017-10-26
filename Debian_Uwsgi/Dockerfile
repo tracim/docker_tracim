@@ -48,6 +48,7 @@ RUN apt update -q && apt install -yq \
 	&& npm install \
 	&& npm run gulp-dev \
 	&& echo INFO: Node.js step OK \
+
 # Install Tracim
 # BUG : command stops without Docker notifying it.
 RUN cd /tracim \
@@ -75,6 +76,7 @@ RUN cd /tracim \
 	&& ln -s /etc/tracim/nginx.conf /etc/nginx/sites-available/tracim.conf \
 	&& ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf \
 	&& chown root:www-data -R /var/tracim/logs \
+	&& chmod 775 -R /var/tracim/logs \
 	&& rm -rf /var/lib/apt/list/* \
 	&& apt clean -q
 # TODO remove useless packages post-install
@@ -86,8 +88,7 @@ COPY check_env_vars.sh /tracim/check_env_vars.sh
 COPY common.sh /tracim/common.sh
 COPY entrypoint.sh /tracim/entrypoint.sh
 
-RUN chmod 775 -R /var/tracim/logs \
-	&& rm /etc/nginx/sites-enabled/default \
+RUN rm /etc/nginx/sites-enabled/default \
 	&& chmod 755 /tracim/entrypoint.sh \
 	&& chmod +x /tracim/entrypoint.sh
 
