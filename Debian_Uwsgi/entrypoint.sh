@@ -11,7 +11,6 @@ if [ ! "$?" = 0 ]; then
     exit 1
 fi
 
-
 # Execute common tasks
 /bin/bash /tracim/common.sh
 if [ ! "$?" = 0 ]; then
@@ -54,8 +53,7 @@ if [ "$DATABASE_TYPE" = sqlite ] ; then
     fi
 fi
 
-
-# Create file if tmp/config.ini exist
+# Create conf file if none exists
 if [ ! -f "/etc/tracim/config.ini" ]; then
     cp /tracim/tracim/development.ini.base /etc/tracim/config.ini
     sed -i 's/\(depot_storage_dir *= *\).*/depot_storage_dir = \/var\/tracim\/depot/' /etc/tracim/config.ini
