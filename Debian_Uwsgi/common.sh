@@ -17,8 +17,6 @@ fi
 if [ ! -f /etc/tracim/config.ini ]; then
     CONFIG_FILE_IS_NEW=1
     cp /tracim/tracim/development.ini.base /etc/tracim/config.ini
-    touch /tmp/config.ini
-    echo FICHIER CREE
 fi
 ln -sf /etc/tracim/config.ini /tracim/tracim/config.ini
 
