@@ -33,8 +33,6 @@ RUN apt update -q \
 	postgresql \
 	postgresql-client \
 	mysql-server \
-	libmariadbd-dev \
-	libmariadbclient-dev-compat \
 	nginx \
 	&& locale-gen en_US.UTF-8 en_us \
 	&& dpkg-reconfigure locales \
@@ -51,25 +49,24 @@ RUN apt update -q \
 	&& echo INFO: Node.js step OK \
 # Install Tracim
 # BUG : command stops without Docker notifying it.
-RUN cd /tracim/tracim \
-	&& python3 setup.py develop \
+RUN cd /tracim \
 	&& pip3 install -r install/requirements.txt \
 	&& pip3 install -r install/requirements.mysql.txt \
 	&& pip3 install -r install/requirements.postgresql.txt \
-	&& pip3 install mysqlclient \
 	&& echo INFO: pip installations OK \
+	&& cd /tracim/tracim \
+	&& python3 setup.py develop \
+# Translation
+	&& python3 setup.py compile_catalog \
 # Conf files
 	&& cp /tracim/tracim/development.ini.base /tracim/tracim/development.ini \
 	&& cp /tracim/tracim/wsgidav.conf.sample /tracim/tracim/wsgidav.conf \
-# Translation
-	&& python3 setup.py compile_catalog
 # Init DB schema
 	&& gearbox setup-app --debug \
 # Prepare volumes
-	&& mkdir /etc/tracim \
-	&& mkdir /var/tracim \
-	&& mkdir /var/tracim/logs \
-	&& mkdir /var/tracim/assets \
+	&& mkdir /etc/tracim -p \
+	&& mkdir /var/tracim/logs -p \
+	&& mkdir /var/tracim/assets -p \
 	&& echo INFO: Volumes step OK \
 #Init config files
 	&& ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini \
