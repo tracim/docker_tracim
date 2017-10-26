@@ -8,9 +8,10 @@ ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
 ENV LC_ALL C.UTF-8
 
+VOLUME ["/etc/tracim", "/var/tracim"]
+
 # Install required packages
-RUN apt update -q \
-	&& apt install -yq sudo \
+RUN apt update -q && apt install -yq \
 	git \
 	locales \
 	realpath \
@@ -42,7 +43,7 @@ RUN apt update -q \
 	&& git clone http://github.com/tracim/tracim.git \
 	&& cd /tracim/ \
 # Install Node.js
-	&& curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - \
+	&& curl -sL https://deb.nodesource.com/setup_7.x | bash - \
 	&& apt install -yq nodejs \
 	&& npm install \
 	&& npm run gulp-dev \
@@ -77,8 +78,6 @@ RUN cd /tracim \
 	&& rm -rf /var/lib/apt/list/* \
 	&& apt clean -q
 # TODO remove useless packages post-install
-
-VOLUME ["/etc/tracim", "/var/tracim"]
 
 COPY uwsgi.ini /etc/tracim/uwsgi.ini
 COPY nginx.conf /etc/tracim/nginx.conf
