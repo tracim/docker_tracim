@@ -1,17 +1,14 @@
 FROM debian:latest
 MAINTAINER contact@algoo.fr
 
-#TODO: See GOOD PRATICE (remove apt lists, cache, etc)
-#TODO @Damien: processus d'install (pip) plein de warning et d'erreur de compilation non fatals. 
-#Voir pour avoir toute les libb-dev qu'il faut ?
-#virtual env
+# TODO @Damien: pip installs with warnings and compilation error.
 
-#Env variable
+# Env variable
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
 ENV LC_ALL C.UTF-8
 
-#Install required packages
+# Install required packages
 RUN apt update -q \
 	&& apt install -yq sudo \
 	git \
@@ -43,51 +40,46 @@ RUN apt update -q \
 	&& dpkg-reconfigure locales \
 	&& locale-gen C.UTF-8 \
 	&& /usr/sbin/update-locale LANG=C.UTF-8 \
-#Get the source from GitHub
+# Clone from GitHub
 	&& git clone http://github.com/tracim/tracim.git \
 	&& cd /tracim/ \
-#Install node js
+# Install Node.js
 	&& curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - \
 	&& apt install -yq nodejs \
-#Check npm version
-	&& npm -v \
-	&& cd /tracim/ \
-#Install frontend dependencies
 	&& npm install \
-#Compile them
-	&& npm run gulp-dev # for a development environment \
-	&& echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX COMPILE STEP SUCCED XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-#Install Tracim and its dependencies
-#BUG : commande s'interrompt sans que Docker le vois.
+	&& npm run gulp-dev \
+	&& echo INFO: Node.js step OK \
+# Install Tracim
+# BUG : command stops without Docker notifying it.
 RUN cd /tracim/tracim \
 	&& python3 setup.py develop \
-	&& cd /tracim/ \
 	&& pip3 install -r install/requirements.txt \
 	&& pip3 install -r install/requirements.mysql.txt \
 	&& pip3 install -r install/requirements.postgresql.txt \
 	&& pip3 install mysqlclient \
-	&& echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXX Installation pip OK XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX \
-#Conf files
+	&& echo INFO: pip installations OK \
+# Conf files
 	&& cp /tracim/tracim/development.ini.base /tracim/tracim/development.ini \
 	&& cp /tracim/tracim/wsgidav.conf.sample /tracim/tracim/wsgidav.conf \
-#DB schema
-	&& cd /tracim/tracim/ && gearbox setup-app --debug \
-	&& cd /tracim/doc/ && echo ALTER SCHEMA tracimdb DEFAULT CHARACTER SET utf8 >> database.md \
-#Prepare volumes
+# Translation
+	&& python3 setup.py compile_catalog
+# Init DB schema
+	&& gearbox setup-app --debug \
+# Prepare volumes
 	&& mkdir /etc/tracim \
 	&& mkdir /var/tracim \
 	&& mkdir /var/tracim/logs \
 	&& mkdir /var/tracim/assets \
-	&& echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Preparation Volumes OK XXXXXXXXXXXXXXXXXXXXXXXX \
+	&& echo INFO: Volumes step OK \
 #Init config files
 	&& ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini \
 	&& ln -s /etc/uwsgi/apps-available/tracim.ini /etc/uwsgi/apps-enabled/tracim.ini \
 	&& ln -s /etc/tracim/nginx.conf /etc/nginx/sites-available/tracim.conf \
-	&& ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf \ 
+	&& ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf \
 	&& chown root:www-data -R /var/tracim/logs \
-	&& rm -rf /var/lib/apt/list/* \	
-	&& rm -rf /var/cache/apt/archives/*
-#TODO retirer les paquets inutiles post-install
+	&& rm -rf /var/lib/apt/list/* \
+	&& apt clean -q
+# TODO remove useless packages post-install
 
 VOLUME ["/etc/tracim", "/var/tracim"]
 
