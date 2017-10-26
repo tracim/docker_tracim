@@ -29,7 +29,11 @@ if [ "$DATABASE_TYPE" = mysql ] ; then
     if [ ${TEST_TABLE} = 0 ] ; then
         INIT_DATABASE=true
     fi
+
+    # Update sqlalchemy.url config
+    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE+pymysql:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini
 fi
+
 
 # PostgreSQL case
 if [ "$DATABASE_TYPE" = postgresql ] ; then
@@ -44,13 +48,20 @@ if [ "$DATABASE_TYPE" = postgresql ] ; then
     if [ $TEST_TABLE = f ] ; then
         INIT_DATABASE=true
     fi
+
+    # Update sqlalchemy.url config
+    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini
 fi
 
 # SQLite case
 if [ "$DATABASE_TYPE" = sqlite ] ; then
+    # Check if database must be init
     if [ ! -f /var/tracim/tracim.db ]; then
         INIT_DATABASE=true
     fi
+
+    # Update sqlalchemy.url config
+    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = sqlite:\/\/\/\/var\/tracim\/tracim.db/" /etc/tracim/config.ini
 fi
 
 # Create conf file if none exists
@@ -62,13 +73,6 @@ if [ ! -f "/etc/tracim/config.ini" ]; then
     sed -i "s/\(cookie_secret *= *\).*/cookie_secret = $SECRET/" /etc/tracim/config.ini
     sed -i "s/\(beaker.session.secret *= *\).*/beaker.session.secret = $SECRET/" /etc/tracim/config.ini
     sed -i "s/\(beaker.session.validate_key *= *\).*/beaker.session.validate_key = $SECRET/" /etc/tracim/config.ini
-fi
-
-# Update sqlalchemy.url config
-if ! [ "$DATABASE_TYPE" = sqlite ] ; then
-    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini
-else
-    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = sqlite:\/\/\/\/var\/tracim\/tracim.db/" /etc/tracim/config.ini
 fi
 
 # Start redis server (for async email sending if configured)
