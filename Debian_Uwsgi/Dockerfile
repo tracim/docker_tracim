@@ -7,6 +7,12 @@ ENV LC_ALL C.UTF-8
 
 VOLUME ["/etc/tracim", "/var/tracim"]
 
+# Prepare volumes
+RUN mkdir /etc/tracim -p \
+    && mkdir /var/tracim/logs -p \
+    && mkdir /var/tracim/assets -p \
+    && echo INFO: Volumes step OK \
+
 COPY uwsgi.ini /etc/tracim/uwsgi.ini
 COPY nginx.conf /etc/tracim/nginx.conf
 COPY wsgi.py /tracim/tracim/wsgi.py
@@ -68,11 +74,6 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && cp /tracim/tracim/wsgidav.conf.sample /tracim/tracim/wsgidav.conf \
 # Init DB schema
     && gearbox setup-app --debug \
-# Prepare volumes
-    && mkdir /etc/tracim -p \
-    && mkdir /var/tracim/logs -p \
-    && mkdir /var/tracim/assets -p \
-    && echo INFO: Volumes step OK \
 # Init config files
     && rm /etc/nginx/sites-enabled/default \
     && ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini \
