@@ -41,9 +41,9 @@ RUN apt update -q && apt install -yq \
     && echo INFO: packages installations OK \
 # Clone from GitHub
     && cd /tracim/ \
+    # as /tracim/ already exists, we can't use standard git clone
     && git init \
     && git remote add origin http://github.com/tracim/tracim.git \
-    && git fetch \
     && git pull origin master \
     && git status \
     && echo INFO: repository cloning OK \
