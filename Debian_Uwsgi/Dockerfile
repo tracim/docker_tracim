@@ -17,7 +17,6 @@ COPY entrypoint.sh /tracim/entrypoint.sh
 # Install required packages
 RUN apt update -q && apt install -yq \
         git \
-        locales \
         realpath \
         redis-server \
         python3 \
@@ -39,10 +38,7 @@ RUN apt update -q && apt install -yq \
         postgresql-client \
         mysql-server \
         nginx \
-    && locale-gen en_US.UTF-8 en_us \
-    && dpkg-reconfigure locales \
-    && locale-gen C.UTF-8 \
-    && /usr/sbin/update-locale LANG=C.UTF-8 \
+    && echo INFO: packages installations OK \
 # Clone from GitHub
     && git clone http://github.com/tracim/tracim.git \
     && cd /tracim/ \
