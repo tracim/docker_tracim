@@ -31,7 +31,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
         curl \
         uwsgi-plugin-python3 \
         openjdk-8-jre-headless \
-        libmagickwand-dev \
+        libmagickwand-6.q16-3 \
         postgresql-server-dev-all \
         postgresql \
         postgresql-client \
