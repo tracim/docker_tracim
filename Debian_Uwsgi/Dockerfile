@@ -1,14 +1,18 @@
 FROM debian:latest
 MAINTAINER contact@algoo.fr
 
-# TODO @Damien: pip installs with warnings and compilation error.
-
-# Env variable
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
 ENV LC_ALL C.UTF-8
 
 VOLUME ["/etc/tracim", "/var/tracim"]
+
+COPY uwsgi.ini /etc/tracim/uwsgi.ini
+COPY nginx.conf /etc/tracim/nginx.conf
+COPY wsgi.py /tracim/tracim/wsgi.py
+COPY check_env_vars.sh /tracim/check_env_vars.sh
+COPY common.sh /tracim/common.sh
+COPY entrypoint.sh /tracim/entrypoint.sh
 
 # Install required packages
 RUN apt update -q && apt install -yq \
@@ -48,10 +52,7 @@ RUN apt update -q && apt install -yq \
 	&& npm install \
 	&& npm run gulp-dev \
 	&& echo INFO: Node.js step OK \
-
 # Install Tracim
-# BUG : command stops without Docker notifying it.
-RUN cd /tracim \
 	&& pip3 install -r install/requirements.txt \
 	&& pip3 install -r install/requirements.mysql.txt \
 	&& pip3 install -r install/requirements.postgresql.txt \
@@ -70,25 +71,19 @@ RUN cd /tracim \
 	&& mkdir /var/tracim/logs -p \
 	&& mkdir /var/tracim/assets -p \
 	&& echo INFO: Volumes step OK \
-#Init config files
+# Init config files
+	&& rm /etc/nginx/sites-enabled/default \
 	&& ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini \
 	&& ln -s /etc/uwsgi/apps-available/tracim.ini /etc/uwsgi/apps-enabled/tracim.ini \
 	&& ln -s /etc/tracim/nginx.conf /etc/nginx/sites-available/tracim.conf \
 	&& ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf \
 	&& chown root:www-data -R /var/tracim/logs \
 	&& chmod 775 -R /var/tracim/logs \
+# Purges useless packages post-install
 	&& rm -rf /var/lib/apt/list/* \
-	&& apt clean -q
-# TODO remove useless packages post-install
-
-COPY uwsgi.ini /etc/tracim/uwsgi.ini
-COPY nginx.conf /etc/tracim/nginx.conf
-COPY wsgi.py /tracim/tracim/wsgi.py
-COPY check_env_vars.sh /tracim/check_env_vars.sh
-COPY common.sh /tracim/common.sh
-COPY entrypoint.sh /tracim/entrypoint.sh
-
-RUN rm /etc/nginx/sites-enabled/default \
+	&& apt purge -yg curl \
+	&& apt clean -q \
+	&& echo INFO: Package purge step OK \
 	&& chmod 755 /tracim/entrypoint.sh \
 	&& chmod +x /tracim/entrypoint.sh
 
