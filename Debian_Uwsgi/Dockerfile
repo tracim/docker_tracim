@@ -32,12 +32,8 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
         nginx \
     && echo INFO: packages installations OK \
 # Clone from GitHub
+    && git clone http://github.com/tracim/tracim.git \
     && cd /tracim/ \
-    # as /tracim/ already exists, we can't use standard git clone
-    && git init \
-    && git remote add origin http://github.com/tracim/tracim.git \
-    && git pull origin master \
-    && git status \
     && echo INFO: repository cloning OK \
 # Install Node.js
     && curl -sL https://deb.nodesource.com/setup_7.x | bash - \
