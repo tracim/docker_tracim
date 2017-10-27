@@ -5,14 +5,6 @@ ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
 ENV LC_ALL C.UTF-8
 
-VOLUME ["/etc/tracim", "/var/tracim"]
-
-# Prepare volumes
-RUN mkdir /etc/tracim -p \
-    && mkdir /var/tracim/logs -p \
-    && mkdir /var/tracim/assets -p \
-    && echo INFO: Volumes step OK \
-
 COPY uwsgi.ini /etc/tracim/uwsgi.ini
 COPY nginx.conf /etc/tracim/nginx.conf
 COPY wsgi.py /tracim/tracim/wsgi.py
@@ -80,8 +72,12 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && ln -s /etc/uwsgi/apps-available/tracim.ini /etc/uwsgi/apps-enabled/tracim.ini \
     && ln -s /etc/tracim/nginx.conf /etc/nginx/sites-available/tracim.conf \
     && ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf \
+# Prepare volumes
+    && mkdir /var/tracim/logs -p \
+    && mkdir /var/tracim/assets -p \
     && chown root:www-data -R /var/tracim/logs \
     && chmod 775 -R /var/tracim/logs \
+    && echo INFO: Volumes folders step OK \
 # Purges useless packages post-install
     && rm -rf /var/lib/apt/list/* \
     && DEBIAN_FRONTEND=noninteractive apt purge -yq curl \
@@ -89,5 +85,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && echo INFO: Package purge step OK \
     && chmod 755 /tracim/entrypoint.sh \
     && chmod +x /tracim/entrypoint.sh
+
+VOLUME ["/etc/tracim", "/var/tracim"]
 
 CMD ["/bin/bash","/tracim/entrypoint.sh"]
