@@ -5,13 +5,6 @@ ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
 ENV LC_ALL C.UTF-8
 
-COPY uwsgi.ini /etc/tracim/uwsgi.ini
-COPY nginx.conf /etc/tracim/nginx.conf
-COPY wsgi.py /tracim/tracim/wsgi.py
-COPY check_env_vars.sh /tracim/check_env_vars.sh
-COPY common.sh /tracim/common.sh
-COPY entrypoint.sh /tracim/entrypoint.sh
-
 # Install required packages
 RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && DEBIAN_FRONTEND=noninteractive apt install -yq \
@@ -85,6 +78,13 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && echo INFO: Package purge step OK \
     && chmod 755 /tracim/entrypoint.sh \
     && chmod +x /tracim/entrypoint.sh
+
+COPY uwsgi.ini /etc/tracim/uwsgi.ini
+COPY nginx.conf /etc/tracim/nginx.conf
+COPY wsgi.py /tracim/tracim/wsgi.py
+COPY check_env_vars.sh /tracim/check_env_vars.sh
+COPY common.sh /tracim/common.sh
+COPY entrypoint.sh /tracim/entrypoint.sh
 
 VOLUME ["/etc/tracim", "/var/tracim"]
 
