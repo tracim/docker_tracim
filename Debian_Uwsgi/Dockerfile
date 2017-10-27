@@ -40,8 +40,13 @@ RUN apt update -q && apt install -yq \
         nginx \
     && echo INFO: packages installations OK \
 # Clone from GitHub
-    && git clone http://github.com/tracim/tracim.git \
     && cd /tracim/ \
+    && git init \
+    && git remote add origin http://github.com/tracim/tracim.git \
+    && git fetch \
+    && git pull origin master \
+    && git status \
+    && echo INFO: repository cloning OK \
 # Install Node.js
     && curl -sL https://deb.nodesource.com/setup_7.x | bash - \
     && apt install -yq nodejs \
