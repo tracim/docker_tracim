@@ -15,7 +15,8 @@ COPY common.sh /tracim/common.sh
 COPY entrypoint.sh /tracim/entrypoint.sh
 
 # Install required packages
-RUN apt update -q && apt install -yq \
+RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
+    && DEBIAN_FRONTEND=noninteractive apt install -yq \
         git \
         realpath \
         redis-server \
@@ -49,7 +50,7 @@ RUN apt update -q && apt install -yq \
     && echo INFO: repository cloning OK \
 # Install Node.js
     && curl -sL https://deb.nodesource.com/setup_7.x | bash - \
-    && apt install -yq nodejs \
+    && DEBIAN_FRONTEND=noninteractive apt install -yq nodejs \
     && npm install \
     && npm run gulp-dev \
     && echo INFO: Node.js step OK \
@@ -82,8 +83,8 @@ RUN apt update -q && apt install -yq \
     && chmod 775 -R /var/tracim/logs \
 # Purges useless packages post-install
     && rm -rf /var/lib/apt/list/* \
-    && apt purge -yg curl \
-    && apt clean -q \
+    && DEBIAN_FRONTEND=noninteractive apt purge -yq curl \
+    && DEBIAN_FRONTEND=noninteractive apt clean -q \
     && echo INFO: Package purge step OK \
     && chmod 755 /tracim/entrypoint.sh \
     && chmod +x /tracim/entrypoint.sh
