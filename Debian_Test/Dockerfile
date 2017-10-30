@@ -43,6 +43,7 @@ ENV LC_ALL C.UTF-8
 
 #Get the source from GitHub
 RUN git clone http://github.com/tracim/tracim.git \
+	&& git checkout develop \
 	&& cd /tracim/
 
 #Install node js
