@@ -71,9 +71,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && rm -rf /var/lib/apt/list/* \
     && DEBIAN_FRONTEND=noninteractive apt purge -yq curl \
     && DEBIAN_FRONTEND=noninteractive apt clean -q \
-    && echo INFO: Package purge step OK \
-    && chmod 755 /tracim/entrypoint.sh \
-    && chmod +x /tracim/entrypoint.sh
+    && echo INFO: Package purge step OK
 
 COPY uwsgi.ini /etc/tracim/uwsgi.ini
 COPY nginx.conf /etc/tracim/nginx.conf
