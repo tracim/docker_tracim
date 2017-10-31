@@ -71,9 +71,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && rm -rf /var/lib/apt/list/* \
     && DEBIAN_FRONTEND=noninteractive apt purge -yq curl \
     && DEBIAN_FRONTEND=noninteractive apt clean -q \
-    && echo INFO: Package purge step OK \
-    && chmod 755 /tracim/entrypoint.sh \
-    && chmod +x /tracim/entrypoint.sh
+    && echo INFO: Package purge step OK
 
 COPY uwsgi.ini /etc/tracim/uwsgi.ini
 COPY nginx.conf /etc/tracim/nginx.conf
@@ -81,6 +79,10 @@ COPY wsgi.py /tracim/tracim/wsgi.py
 COPY check_env_vars.sh /tracim/check_env_vars.sh
 COPY common.sh /tracim/common.sh
 COPY entrypoint.sh /tracim/entrypoint.sh
+
+# Allow entrypoint
+RUN chmod 755 /tracim/entrypoint.sh
+
 
 VOLUME ["/etc/tracim", "/var/tracim"]
 
