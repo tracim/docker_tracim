@@ -50,11 +50,6 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && python3 setup.py develop \
 # Translation
     && python3 setup.py compile_catalog \
-# Conf files
-    && cp /tracim/tracim/development.ini.base /tracim/tracim/development.ini \
-    && cp /tracim/tracim/wsgidav.conf.sample /tracim/tracim/wsgidav.conf \
-# Init DB schema
-    && gearbox setup-app --debug \
 # Init config files
     && rm /etc/nginx/sites-enabled/default \
     && ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini \

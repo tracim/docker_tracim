@@ -13,7 +13,7 @@ if [ "$PULL" = 1 ]; then
     cd /tracim pip3 install -r install/requirements.mysql.txt
 fi
 
-# Create config.ini file if no exist
+# Create tracim conf file if none exists
 if [ ! -f /etc/tracim/config.ini ]; then
     CONFIG_FILE_IS_NEW=1
     cp /tracim/tracim/development.ini.base /etc/tracim/config.ini
