@@ -30,46 +30,29 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
         postgresql-client \
         mysql-server \
         nginx \
-    && echo INFO: packages installations OK \
 # Clone from GitHub
     && git clone http://github.com/tracim/tracim.git \
     && cd /tracim/ \
-    && echo INFO: repository cloning OK \
 # Install Node.js
     && curl -sL https://deb.nodesource.com/setup_7.x | bash - \
     && DEBIAN_FRONTEND=noninteractive apt install -yq nodejs \
     && npm install \
     && npm run gulp-dev \
-    && echo INFO: Node.js step OK \
 # Install Tracim
     && pip3 install -r install/requirements.txt \
     && pip3 install -r install/requirements.mysql.txt \
     && pip3 install -r install/requirements.postgresql.txt \
-    && echo INFO: pip installations OK \
     && cd /tracim/tracim \
     && python3 setup.py develop \
 # Translation
     && python3 setup.py compile_catalog \
-# Init config files
-    && rm /etc/nginx/sites-enabled/default \
-    && ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini \
-    && ln -s /etc/uwsgi/apps-available/tracim.ini /etc/uwsgi/apps-enabled/tracim.ini \
-    && ln -s /etc/tracim/nginx.conf /etc/nginx/sites-available/tracim.conf \
-    && ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf \
-# Prepare volumes
-    && mkdir /var/tracim/logs -p \
-    && mkdir /var/tracim/assets -p \
-    && chown root:www-data -R /var/tracim/logs \
-    && chmod 775 -R /var/tracim/logs \
-    && echo INFO: Volumes folders step OK \
-# Purges useless packages post-install
-    && rm -rf /var/lib/apt/list/* \
+# Purges useless packages
     && DEBIAN_FRONTEND=noninteractive apt purge -yq curl \
     && DEBIAN_FRONTEND=noninteractive apt clean -q \
-    && echo INFO: Package purge step OK
+    && rm -rf /var/lib/apt/list/*
 
-COPY uwsgi.ini /etc/tracim/uwsgi.ini
-COPY nginx.conf /etc/tracim/nginx.conf
+COPY uwsgi.ini /tracim/uwsgi.ini
+COPY nginx.conf /tracim/nginx.conf
 COPY wsgi.py /tracim/tracim/wsgi.py
 COPY check_env_vars.sh /tracim/check_env_vars.sh
 COPY common.sh /tracim/common.sh

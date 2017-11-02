@@ -17,62 +17,37 @@ if [ ! "$?" = 0 ]; then
     exit 1
 fi
 
-# MySQL case
-if [ "$DATABASE_TYPE" = mysql ] ; then
+case "$DATABASE_TYPE" in
+  mysql)
     # Ensure DATABASE_PORT is set
     if ! [ -n "$DATABASE_PORT" ]; then
         DATABASE_PORT=3306
     fi
-
     # Check if database must be init
     TEST_TABLE=$(mysql --host="$DATABASE_HOST" --user="$DATABASE_USER" --password="$DATABASE_PASSWORD" --database="$DATABASE_NAME" -s -N --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '$DATABASE_NAME' AND table_name = 'content';")
     if [ ${TEST_TABLE} = 0 ] ; then
         INIT_DATABASE=true
     fi
-
-    # Update sqlalchemy.url config
-    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE+pymysql:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini
-fi
-
-
-# PostgreSQL case
-if [ "$DATABASE_TYPE" = postgresql ] ; then
+    ;;
+  postgresql)
+    DATABASE_SUFFIX="?client_encoding=utf8"
     # Ensure DATABASE_PORT is set
     if ! [ -n "$DATABASE_PORT" ]; then
         DATABASE_PORT=5432
     fi
-    DATABASE_SUFFIX="?client_encoding=utf8"
-
     # Check if database must be init
     TEST_TABLE=$(PGPASSWORD="$DATABASE_PASSWORD" psql -U ${DATABASE_USER} -h ${DATABASE_HOST} -d ${DATABASE_NAME} -t -c "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'content' );")
     if [ $TEST_TABLE = f ] ; then
         INIT_DATABASE=true
     fi
-
-    # Update sqlalchemy.url config
-    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini
-fi
-
-# SQLite case
-if [ "$DATABASE_TYPE" = sqlite ] ; then
+    ;;
+  sqlite)
     # Check if database must be init
     if [ ! -f /var/tracim/tracim.db ]; then
         INIT_DATABASE=true
     fi
-
-    # Update sqlalchemy.url config
-    sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = sqlite:\/\/\/\/var\/tracim\/tracim.db/" /etc/tracim/config.ini
-fi
-
-sed -i 's/\(depot_storage_dir *= *\).*/depot_storage_dir = \/var\/tracim\/depot/' /etc/tracim/config.ini
-sed -i "s/\(# radicale.server.filesystem.folder *= *\).*/radicale.server.filesystem.folder = \/var\/tracim\/radicale/" /etc/tracim/config.ini
-SECRET=$(python -c "import uuid; print(str(uuid.uuid4()))")
-sed -i "s/\(cookie_secret *= *\).*/cookie_secret = $SECRET/" /etc/tracim/config.ini
-sed -i "s/\(beaker.session.secret *= *\).*/beaker.session.secret = $SECRET/" /etc/tracim/config.ini
-sed -i "s/\(beaker.session.validate_key *= *\).*/beaker.session.validate_key = $SECRET/" /etc/tracim/config.ini
-
-# Start redis server (for async email sending if configured)
-service redis-server start
+    ;;
+esac
 
 # Initialize database if needed
 if [ "$INIT_DATABASE" = true ] ; then
@@ -89,6 +64,7 @@ mkdir -p /var/run/uwsgi/app/tracim/
 chown www-data:www-data -R /var/run/uwsgi
 chown www-data:www-data -R /var/tracim
 
+service redis-server start  # async email sending
 service nginx start
 uwsgi -i /etc/uwsgi/apps-available/tracim.ini --uid www-data --gid www-data
 
