@@ -53,7 +53,6 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
 
 COPY uwsgi.ini /tracim/uwsgi.ini
 COPY nginx.conf /tracim/nginx.conf
-COPY wsgi.py /tracim/tracim/wsgi.py
 COPY check_env_vars.sh /tracim/check_env_vars.sh
 COPY common.sh /tracim/common.sh
 COPY entrypoint.sh /tracim/entrypoint.sh

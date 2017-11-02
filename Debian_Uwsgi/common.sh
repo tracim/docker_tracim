@@ -64,3 +64,8 @@ fi
 if [ ! -f /var/tracim/assets ]; then
     mkdir /var/tracim/assets -p
 fi
+
+# Configure tracim wsgi file
+sed -i "s/\(# import logging\)$/import logging\nimport logging.config/" /tracim/tracim/app.wsgi
+sed -i "s/\(# logging.config.fileConfig(APP_CONFIG)\)$/logging.config.fileConfig(APP_CONFIG)/" /tracim/tracim/app.wsgi
+sed -i "s/\(APP_CONFIG *= *\).*/APP_CONFIG = \"\/tracim\/tracim\/config.ini\"/" /tracim/tracim/app.wsgi
