@@ -37,23 +37,23 @@ ln -sf /etc/tracim/config.ini /tracim/tracim/config.ini
 # Create nginx conf file if none exists
 if [ ! -f /etc/tracim/nginx.conf ]; then
     cp /tracim/nginx.conf /etc/tracim/nginx.conf
-    ln -s /etc/tracim/nginx.conf /etc/nginx/sites-available/tracim.conf
-    ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf
-    rm /etc/nginx/sites-enabled/default
 fi
+ln -s /etc/tracim/nginx.conf /etc/nginx/sites-available/tracim.conf
+ln -s /etc/nginx/sites-available/tracim.conf /etc/nginx/sites-enabled/tracim.conf
+rm /etc/nginx/sites-enabled/default
 
 # Create uwsgi conf file if none exists
 if [ ! -f /etc/tracim/uwsgi.ini ]; then
     cp /tracim/uwsgi.ini /etc/tracim/uwsgi.ini
-    ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini
-    ln -s /etc/uwsgi/apps-available/tracim.ini /etc/uwsgi/apps-enabled/tracim.ini
 fi
+ln -s /etc/tracim/uwsgi.ini /etc/uwsgi/apps-available/tracim.ini
+ln -s /etc/uwsgi/apps-available/tracim.ini /etc/uwsgi/apps-enabled/tracim.ini
 
 # Create wsgidav.conf file if no exist
 if [ ! -f /etc/tracim/wsgidav.conf ]; then
     cp /tracim/tracim/wsgidav.conf.sample /etc/tracim/wsgidav.conf
 fi
-ln -sf /etc/tracim/wsgidav.conf /tracim/tracim/wsgidav.conf
+ln -s /etc/tracim/wsgidav.conf /tracim/tracim/wsgidav.conf
 
 # Create logs and assets directories
 if [ ! -f /var/tracim/logs ]; then
