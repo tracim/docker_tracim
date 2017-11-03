@@ -20,15 +20,12 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
         libxslt1-dev \
         zlib1g-dev \
         libjpeg-dev \
+        libpq-dev \
         uwsgi \
         curl \
         uwsgi-plugin-python3 \
         openjdk-8-jre-headless \
         libmagickwand-6.q16-3 \
-        postgresql-server-dev-all \
-        postgresql \
-        postgresql-client \
-        mysql-server \
         nginx \
 # Clone from GitHub
     && git clone http://github.com/tracim/tracim.git \
