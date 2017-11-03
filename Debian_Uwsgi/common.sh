@@ -25,11 +25,11 @@ if [ ! -f /etc/tracim/config.ini ]; then
     sed -i "s/\(beaker.session.validate_key *= *\).*/beaker.session.validate_key = $SECRET/" /etc/tracim/config.ini
     case "$DATABASE_TYPE" in
       mysql)
-        sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE+pymysql:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini ;;
+        sed -i "s/\(^sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE+pymysql:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini ;;
       postgresql)
-        sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini ;;
+        sed -i "s/\(^sqlalchemy.url *= *\).*/\\sqlalchemy.url = $DATABASE_TYPE:\/\/$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT\/$DATABASE_NAME$DATABASE_SUFFIX/" /etc/tracim/config.ini ;;
       sqlite)
-        sed -i "s/\(sqlalchemy.url *= *\).*/\\sqlalchemy.url = sqlite:\/\/\/\/var\/tracim\/tracim.db/" /etc/tracim/config.ini ;;
+        sed -i "s/\(^sqlalchemy.url *= *\).*/\\sqlalchemy.url = sqlite:\/\/\/\/var\/tracim\/tracim.db/" /etc/tracim/config.ini ;;
     esac
 fi
 ln -sf /etc/tracim/config.ini /tracim/tracim/config.ini
@@ -66,6 +66,6 @@ if [ ! -f /var/tracim/assets ]; then
 fi
 
 # Configure tracim wsgi file
-sed -i "s/\(# import logging\)$/import logging\nimport logging.config/" /tracim/tracim/app.wsgi
-sed -i "s/\(# logging.config.fileConfig(APP_CONFIG)\)$/logging.config.fileConfig(APP_CONFIG)/" /tracim/tracim/app.wsgi
-sed -i "s/\(APP_CONFIG *= *\).*/APP_CONFIG = \"\/tracim\/tracim\/config.ini\"/" /tracim/tracim/app.wsgi
+sed -i "s/\(^# import logging\)$/import logging\nimport logging.config/" /tracim/tracim/app.wsgi
+sed -i "s/\(^# logging.config.fileConfig(APP_CONFIG)\)$/logging.config.fileConfig(APP_CONFIG)/" /tracim/tracim/app.wsgi
+sed -i "s/\(^APP_CONFIG *= *\).*/APP_CONFIG = \"\/tracim\/tracim\/config.ini\"/" /tracim/tracim/app.wsgi
