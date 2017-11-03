@@ -67,7 +67,3 @@ chown www-data:www-data -R /var/tracim
 service redis-server start  # async email sending
 service nginx start
 uwsgi -i /etc/uwsgi/apps-available/tracim.ini --uid www-data --gid www-data
-
-ln -sf /var/log/uwsgi/app/tracim.log /var/tracim/logs/uwsgi.log
-ln -sf /var/log/nginx/access.log /var/tracim/logs/nginx-access.log
-ln -sf /var/log/nginx/error.log /var/tracim/logs/nginx-error.log

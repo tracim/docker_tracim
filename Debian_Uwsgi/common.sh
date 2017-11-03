@@ -59,12 +59,18 @@ ln -s /etc/tracim/wsgidav.conf /tracim/tracim/wsgidav.conf
 # Create logs and assets directories
 if [ ! -f /var/tracim/logs ]; then
     mkdir /var/tracim/logs -p
+    touch /var/tracim/logs/uwsgi.log
+    touch /var/tracim/logs/nginx-access.log
+    touch /var/tracim/logs/nginx-error.log
     chown root:www-data -R /var/tracim/logs
     chmod 775 -R /var/tracim/logs
 fi
 if [ ! -f /var/tracim/assets ]; then
     mkdir /var/tracim/assets -p
 fi
+ln -sf /var/tracim/logs/uwsgi.log /var/log/uwsgi/app/tracim.log
+ln -sf /var/tracim/logs/nginx-access.log /var/log/nginx/access.log
+ln -sf /var/tracim/logs/nginx-error.log /var/log/nginx/error.log
 
 # Configure tracim wsgi file
 sed -i "s/\(^# import logging\)$/import logging\nimport logging.config/" /tracim/tracim/app.wsgi
