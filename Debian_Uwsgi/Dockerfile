@@ -21,6 +21,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
         zlib1g-dev \
         libjpeg-dev \
         libpq-dev \
+        libreoffice \
         uwsgi \
         curl \
         uwsgi-plugin-python3 \
