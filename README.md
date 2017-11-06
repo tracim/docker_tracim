@@ -66,20 +66,20 @@ Example with PostgreSQL:
 
     docker run -e DATABASE_TYPE=postgresql \
                -e DATABASE_USER=tracim -e DATABASE_PASSWORD=tracim -e DATABASE_HOST=192.168.1.2 -e DATABASE_NAME=tracim \
-               -p 80:80 -p 3030:3030 -p 127.0.0.1:5232:5232 \
+               -p 80:80 -p 3030:3030 -p 5232:5232 \
                -v /var/tracim/etc/:/etc/tracim algoo/tracim
 
 Example with MySQL
 
     docker run -e DATABASE_TYPE=mysql \
                -e DATABASE_USER=tracim -e DATABASE_PASSWORD=tracim -e DATABASE_HOST=192.168.1.2 -e DATABASE_NAME=tracim \
-               -p 80:80 -p 3030:3030 -p 127.0.0.1:5232:5232 \
+               -p 80:80 -p 3030:3030 -p 5232:5232 \
                -v /var/tracim/etc/:/etc/tracim algoo/tracim
 
 Example with SQLite
 
     docker run -e DATABASE_TYPE=sqlite \
-               -p 80:80 -p 3030:3030 -p 127.0.0.1:5232:5232 \
+               -p 80:80 -p 3030:3030 -p 5232:5232 \
                -v /var/tracim/etc/:/etc/tracim -v /var/tracim/var:/var/tracim algoo/tracim
 
 After execute one of these command, tracim will be available on your system on port 80.
