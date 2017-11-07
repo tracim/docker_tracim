@@ -29,6 +29,8 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
         libmagickwand-6.q16-3 \
         nginx \
         inkscape \
+        mysql-client \
+        postgresql-client \
 # Clone from GitHub
     && git clone http://github.com/tracim/tracim.git \
     && cd /tracim/ \
