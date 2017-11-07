@@ -37,6 +37,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
     && DEBIAN_FRONTEND=noninteractive apt install -yq nodejs \
     && npm install \
     && npm run gulp-dev \
+    && rm -rf /tracim/node_modules \
 # Install Tracim
     && pip3 install -r install/requirements.txt \
     && pip3 install -r install/requirements.mysql.txt \
@@ -46,7 +47,18 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
 # Translation
     && python3 setup.py compile_catalog \
 # Purges useless packages
-    && DEBIAN_FRONTEND=noninteractive apt purge -yq curl \
+    && DEBIAN_FRONTEND=noninteractive apt purge -yq \
+        curl \
+        git \
+        nodejs \
+        python3-dev \
+        build-essential \
+        libxml2-dev \
+        libxslt1-dev \
+        zlib1g-dev \
+        libjpeg-dev \
+        libpq-dev \
+    && DEBIAN_FRONTEND=noninteractive apt autoremove -yq \
     && DEBIAN_FRONTEND=noninteractive apt clean -q \
     && rm -rf /var/lib/apt/list/*
 
