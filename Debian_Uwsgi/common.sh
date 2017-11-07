@@ -19,7 +19,7 @@ if [ ! -f /etc/tracim/config.ini ]; then
     cp /tracim/tracim/development.ini.base /etc/tracim/config.ini
     sed -i "s/\(8080$\)/80/" /etc/tracim/config.ini
     sed -i "s/\(depot_storage_dir *= *\).*/depot_storage_dir = \/var\/tracim\/depot/" /etc/tracim/config.ini
-    sed -i "s/\(radicale.server.host *= *\).*/radicale.server.host = 0.0.0.0/" /etc/tracim/config.ini
+    sed -i "s/\(^# radicale.server.host *= *\).*/radicale.server.host = 0.0.0.0/" /etc/tracim/config.ini
     sed -i "s/\(radicale.server.filesystem.folder *= *\).*/radicale.server.filesystem.folder = \/var\/tracim\/radicale/" /etc/tracim/config.ini
     SECRET=$(python -c "import uuid; print(str(uuid.uuid4()))")
     sed -i "s/\(cookie_secret *= *\).*/cookie_secret = $SECRET/" /etc/tracim/config.ini
