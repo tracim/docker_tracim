@@ -1,18 +1,5 @@
 #!/usr/bin/env bash
 
-# Default values
-PULL=${PULL:=0}
-
-# If PULL is set, change repository HEAD
-if [ "$PULL" = 1 ]; then
-    echo "Upgrade Tracim code"
-    cd /tracim && git pull origin master
-    cd /tracim/tracim && python3 setup.py develop
-    cd /tracim pip3 install -r install/requirements.txt
-    cd /tracim pip3 install -r install/requirements.postgresql.txt
-    cd /tracim pip3 install -r install/requirements.mysql.txt
-fi
-
 # Create tracim conf file if none exists
 if [ ! -f /etc/tracim/config.ini ]; then
     CONFIG_FILE_IS_NEW=1

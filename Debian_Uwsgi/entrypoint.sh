@@ -54,12 +54,6 @@ if [ "$INIT_DATABASE" = true ] ; then
     cd /tracim/tracim/ && gearbox setup-app -c config.ini
 fi
 
-# Upgrade database
-if [ "$PULL" = 1 ]; then
-    echo "Upgrade Tracim database if required"
-    cd /tracim/tracim/ && gearbox migrate upgrade
-fi
-
 mkdir -p /var/run/uwsgi/app/tracim/
 chown www-data:www-data -R /var/run/uwsgi
 chown www-data:www-data -R /var/tracim
