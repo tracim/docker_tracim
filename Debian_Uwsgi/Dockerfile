@@ -28,6 +28,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
         openjdk-8-jre-headless \
         libmagickwand-6.q16-3 \
         nginx \
+        inkscape \
 # Clone from GitHub
     && git clone http://github.com/tracim/tracim.git \
     && cd /tracim/ \
