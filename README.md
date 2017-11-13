@@ -64,17 +64,17 @@ Ports are:
 To run tracim container with MySQL or PostgreSQL, you must set environment ``DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME`` variable.
 Example with PostgreSQL:
 
-    docker run -e DATABASE_TYPE=postgresql \
-               -e DATABASE_USER=tracim -e DATABASE_PASSWORD=tracim -e DATABASE_HOST=192.168.1.2 -e DATABASE_NAME=tracim \
+    docker run -e DATABASE_TYPE=postgresql -e DATABASE_HOST=192.168.1.2 -e DATABASE_PORT=5432 \
+               -e DATABASE_USER=tracim -e DATABASE_PASSWORD=tracim -e DATABASE_NAME=tracim \
                -p 80:80 -p 3030:3030 -p 5232:5232 \
-               -v /var/tracim/etc/:/etc/tracim algoo/tracim
+               -v /var/tracim/etc/:/etc/tracim -v /var/tracim/var:/var/tracim algoo/tracim
 
 Example with MySQL
 
-    docker run -e DATABASE_TYPE=mysql \
-               -e DATABASE_USER=tracim -e DATABASE_PASSWORD=tracim -e DATABASE_HOST=192.168.1.2 -e DATABASE_NAME=tracim \
+    docker run -e DATABASE_TYPE=mysql -e DATABASE_HOST=192.168.1.2 -e DATABASE_PORT=3306 \
+               -e DATABASE_USER=tracim -e DATABASE_PASSWORD=tracim -e DATABASE_NAME=tracim \
                -p 80:80 -p 3030:3030 -p 5232:5232 \
-               -v /var/tracim/etc/:/etc/tracim algoo/tracim
+               -v /var/tracim/etc/:/etc/tracim -v /var/tracim/var:/var/tracim algoo/tracim
 
 Example with SQLite
 
