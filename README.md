@@ -4,7 +4,7 @@
 
 To build tests designed image
 
-    docker build -t algoo/tracim_test:tests ./Debian_Tests
+    docker build -t algoo/tracim_test:tests ./Debian_Test
 
 To build Prod/dev designed image
 
