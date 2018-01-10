@@ -34,6 +34,7 @@ RUN    DEBIAN_FRONTEND=noninteractive apt update -q \
 # Clone from GitHub
     && git clone http://github.com/tracim/tracim.git \
     && cd /tracim/ \
+    && git checkout master \
 # Install Node.js
     && curl -sL https://deb.nodesource.com/setup_7.x | bash - \
     && DEBIAN_FRONTEND=noninteractive apt install -yq nodejs \
