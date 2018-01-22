@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:9
 MAINTAINER contact@algoo.fr
 
 ENV LANG C.UTF-8
