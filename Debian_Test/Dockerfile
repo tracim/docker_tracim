@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:9
 MAINTAINER contact@algoo.fr
 
 #TODO @Damien: processus d'install (pip) plein de warning et d'erreur de compilation non fatals. 
