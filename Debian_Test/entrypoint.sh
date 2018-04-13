@@ -52,5 +52,4 @@ if [ "$TEST_DATABASE_ENGINE" = sqlite ] ; then
 fi
 
 # Run tests
-# TODO retirez true
-cd /tracim/tracim && nosetests -c /tracim/tracim/test.ini -v ; true
+cd /tracim/tracim && nosetests -c /tracim/tracim/test.ini -v
