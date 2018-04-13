@@ -59,7 +59,8 @@ RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - \
 
 #Install Tracim and its dependencies
 RUN cd /tracim/tracim \
-	&& python3 setup.py develop 
+	&& python3 setup.py develop \
+	&& pip3 install -e ".[test]"
 RUN cd /tracim/ \
 	&& pip3 install -r install/requirements.txt \
 	&& pip3 install -r install/requirements.mysql.txt \
